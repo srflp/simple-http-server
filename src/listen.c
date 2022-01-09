@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <limits.h>
@@ -25,15 +26,15 @@ void server_listen(int server_port, bool use_threads)
   handle_error(bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)), "Failed to bind socket");
   // Listen for connections
   handle_error(listen(server_socket, SERVER_BACKLOG), "Failed to listen on socket");
+  printf("Listening on port %d\n", server_port);
 
   while (true)
   {
-    printf("Waiting for connection\n");
-
+    // Accept connection
     socklen_t address_size = sizeof(server_address);
     int client_socket;
     handle_error(client_socket = accept(server_socket, (struct sockaddr *)&server_address, &address_size), "Failed to accept connection");
-    printf("Connection accepted\n");
+    // handle_error(setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &(int){true}, sizeof(int)), "Failed to set socket options");
 
     // Create a pointer for the client socket (pthreads require pointers)
     int *pclient_socket = malloc(sizeof(int));

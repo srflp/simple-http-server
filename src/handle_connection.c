@@ -19,7 +19,7 @@ void *handle_connection(void *pclient_socket)
   {
     printf("Received %ld bytes\n", bytes_read);
     message_size += bytes_read;
-    printf("Message: %s\n", buffer);
+    printf("Message: %s", buffer);
     if (message_size > BUFFER_SIZE - 1 || buffer[message_size - 1] == '\n')
       break;
   }
@@ -38,7 +38,6 @@ void *handle_connection(void *pclient_socket)
   }
 
   close(client_socket);
-  printf("Connection closed\n");
 
   return NULL;
 }
