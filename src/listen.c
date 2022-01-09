@@ -11,11 +11,12 @@
 
 #define SERVER_BACKLOG 100
 
-void server_listen(int server_port, bool use_threads)
+void server_listen(int server_port, char *(*response_generator)(), bool use_threads)
 {
   // Create socket
   int server_socket;
   handle_error(server_socket = socket(AF_INET, SOCK_STREAM, 0), "Failed to create socket");
+  handle_error(setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &(int){true}, sizeof(int)), "Failed to set socket options");
 
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
@@ -34,20 +35,20 @@ void server_listen(int server_port, bool use_threads)
     socklen_t address_size = sizeof(server_address);
     int client_socket;
     handle_error(client_socket = accept(server_socket, (struct sockaddr *)&server_address, &address_size), "Failed to accept connection");
-    // handle_error(setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &(int){true}, sizeof(int)), "Failed to set socket options");
 
-    // Create a pointer for the client socket (pthreads require pointers)
-    int *pclient_socket = malloc(sizeof(int));
-    *pclient_socket = client_socket;
+    // Pass args to threads
+    struct ThreadArgs *thread_args = malloc(sizeof(struct ThreadArgs));
+    thread_args->client_socket = client_socket;
+    thread_args->response_generator = response_generator;
 
     if (use_threads)
     {
       pthread_t t;
-      pthread_create(&t, NULL, handle_connection, pclient_socket);
+      pthread_create(&t, NULL, handle_connection, thread_args);
     }
     else
     {
-      handle_connection(pclient_socket);
+      handle_connection(thread_args);
     }
   }
 }

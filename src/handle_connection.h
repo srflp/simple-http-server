@@ -1,3 +1,9 @@
 #pragma once
 
-void *handle_connection(void *pclient_socket);
+struct ThreadArgs
+{
+  int client_socket;
+  char *(*response_generator)();
+};
+
+void *handle_connection(void *thread_args);
