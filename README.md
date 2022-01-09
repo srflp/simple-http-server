@@ -1,7 +1,7 @@
 ## Kompilacja i uruchomienie
 ### server
 ```sh
-gcc server.c -Wall -o server && ./server
+make && ./bin/server
 ```
 
 ### client / perf tests
