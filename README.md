@@ -1,3 +1,9 @@
+# simple-http-server
+
+## Autorzy
+- Alex Terentowicz 145419
+- Filip Sauer 144465
+
 ## Polecenia
 ### kompilacja i uruchomienie
 ```sh
