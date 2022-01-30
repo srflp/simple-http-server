@@ -11,7 +11,7 @@
 
 #define SERVER_BACKLOG 100
 
-void server_listen(int server_port, char *(*response_generator)(), bool use_threads)
+void server_listen(int server_port, response_t *(*response_generator)(), bool use_threads)
 {
   // Create socket
   int server_socket;
